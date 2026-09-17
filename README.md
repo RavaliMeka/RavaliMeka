@@ -1,16 +1,23 @@
-## Hi there 👋
+# Hi there, I'm Ravali Meka 👋
 
-<!--
-**RavaliMeka/RavaliMeka** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+## DevOps Engineer
 
-Here are some ideas to get you started:
+I'm a DevOps Engineer focused on building reliable, automated, and scalable infrastructure. I enjoy streamlining deployment pipelines, containerizing applications, and driving automation across the software delivery lifecycle.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### 🛠️ Skills
+
+- **Containerization & Orchestration:** Docker, Kubernetes
+- **Infrastructure as Code:** Terraform
+- **CI/CD & Automation:** CI/CD Pipelines, Automation Scripting
+- **Scripting & Programming:** Shell, Python
+
+### 🌱 What I Do
+
+- Design and maintain CI/CD pipelines for smooth and reliable deployments
+- Manage containerized applications with Docker and Kubernetes
+- Automate infrastructure provisioning using Terraform
+- Write shell and Python scripts to streamline operations and reduce manual effort
+
+### 📫 Let's Connect
+
+Feel free to explore my repositories and reach out if you'd like to collaborate!
