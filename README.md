@@ -21,3 +21,13 @@ I'm a DevOps Engineer focused on building reliable, automated, and scalable infr
 ### 📫 Let's Connect
 
 Feel free to explore my repositories and reach out if you'd like to collaborate!
+
+
+## 🎯 Learning Roadmap
+
+- [x] Docker & Kubernetes basics
+- [x] CI/CD with Jenkins
+- [ ] Ansible automation
+- [ ] Helm charts
+- [ ] Advanced Shell Scripting
+- [ ] Kubernetes certification (CKA)
