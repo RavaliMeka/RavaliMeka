@@ -32,9 +32,7 @@ Feel free to explore my repositories and reach out if you'd like to collaborate!
 - [ ] Advanced Shell Scripting
 - [ ] Kubernetes certification (CKA)
 
-## GitHub Contribution Observatory
 
-## GitHub Contribution Observatory
 
 ## GitHub Contribution Observatory
 
