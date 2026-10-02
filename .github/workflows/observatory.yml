@@ -1,0 +1,219 @@
+name: Profile Observatory
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # GitHub Actions cron uses UTC.
+    # 06:00 IST = 00:30 UTC
+    # 18:00 IST = 12:30 UTC
+    - cron: "30 0 * * *"
+    - cron: "30 12 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-observatory
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate Time-Based Observatory
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------------------------------------------------------
+      # Checkout the profile repository
+      # ---------------------------------------------------------
+      - name: Checkout profile repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ---------------------------------------------------------
+      # Checkout the reusable Observatory generator
+      # ---------------------------------------------------------
+      - name: Checkout Profile Observatory
+        uses: actions/checkout@v4
+        with:
+          repository: RavaliMeka/profile-observatory
+          path: .observatory
+          ref: main
+
+      # ---------------------------------------------------------
+      # Setup Node.js
+      # ---------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # ---------------------------------------------------------
+      # Determine theme using India Standard Time
+      #
+      # 06:00 - 17:59 IST = daylight
+      # 18:00 - 05:59 IST = aurora
+      # ---------------------------------------------------------
+      - name: Determine Observatory theme
+        id: theme
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          HOUR=$(TZ=Asia/Kolkata date +%H)
+          DATE=$(TZ=Asia/Kolkata date '+%Y-%m-%d %H:%M:%S IST')
+
+          echo "Current India time: ${DATE}"
+          echo "Current IST hour: ${HOUR}"
+
+          if [ "${HOUR}" -ge 6 ] && [ "${HOUR}" -lt 18 ]; then
+            THEME="daylight"
+            MODE="DAY"
+          else
+            THEME="aurora"
+            MODE="NIGHT"
+          fi
+
+          echo "Selected mode: ${MODE}"
+          echo "Selected theme: ${THEME}"
+
+          echo "theme=${THEME}" >> "$GITHUB_OUTPUT"
+          echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
+          echo "ist_time=${DATE}" >> "$GITHUB_OUTPUT"
+
+      # ---------------------------------------------------------
+      # Generate the current Observatory SVG
+      # ---------------------------------------------------------
+      - name: Generate Observatory
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.repository_owner }}
+          THEME: ${{ steps.theme.outputs.theme }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p profile
+
+          echo "Generating Observatory..."
+          echo "Repository owner: ${USERNAME}"
+          echo "Theme: ${THEME}"
+
+          node .observatory/src/cli.mjs \
+            --user "${USERNAME}" \
+            --theme "${THEME}" \
+            --out profile/observatory.svg
+
+          echo ""
+          echo "Generated Observatory:"
+          ls -lh profile/observatory.svg
+
+      # ---------------------------------------------------------
+      # Validate generated SVG
+      # ---------------------------------------------------------
+      - name: Validate generated SVG
+        shell: bash
+        env:
+          SVG: profile/observatory.svg
+          EXPECTED_LOGIN: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+
+          echo "Validating ${SVG}..."
+
+          # File must exist and contain data
+          test -f "${SVG}"
+          test -s "${SVG}"
+
+          # Basic SVG structure
+          grep -q "<svg" "${SVG}"
+          grep -q "</svg>" "${SVG}"
+
+          # Make sure this is the real profile
+          grep -q "@${EXPECTED_LOGIN}" "${SVG}"
+
+          # Expected Observatory metrics
+          grep -q "contributions" "${SVG}"
+          grep -q "active days" "${SVG}"
+          grep -q "current streak" "${SVG}"
+          grep -q "longest streak" "${SVG}"
+
+          # Prevent accidental sample generation
+          if grep -q "Ada Example" "${SVG}"; then
+            echo "ERROR: Sample profile detected."
+            exit 1
+          fi
+
+          if grep -q "ada-example" "${SVG}"; then
+            echo "ERROR: Sample GitHub login detected."
+            exit 1
+          fi
+
+          # Prevent unexpectedly tiny/corrupt SVG
+          SIZE=$(wc -c < "${SVG}")
+
+          echo "SVG size: ${SIZE} bytes"
+
+          if [ "${SIZE}" -lt 5000 ]; then
+            echo "ERROR: Generated SVG is unexpectedly small."
+            exit 1
+          fi
+
+          echo ""
+          echo "SVG validation passed."
+
+      # ---------------------------------------------------------
+      # Show what mode was generated
+      # ---------------------------------------------------------
+      - name: Observatory summary
+        shell: bash
+        run: |
+          echo "========================================"
+          echo "Profile Observatory"
+          echo "========================================"
+          echo "Profile: ${{ github.repository_owner }}"
+          echo "IST time: ${{ steps.theme.outputs.ist_time }}"
+          echo "Mode: ${{ steps.theme.outputs.mode }}"
+          echo "Theme: ${{ steps.theme.outputs.theme }}"
+          echo "Output: profile/observatory.svg"
+          echo "========================================"
+
+      # ---------------------------------------------------------
+      # Commit the generated SVG
+      # ---------------------------------------------------------
+      - name: Commit Observatory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add profile/observatory.svg
+
+          if git diff --cached --quiet; then
+            echo "No Observatory changes detected."
+            exit 0
+          fi
+
+          git commit \
+            -m "chore: update profile observatory (${{ steps.theme.outputs.mode }})"
+
+          git push origin main
+
+      # ---------------------------------------------------------
+      # Final summary
+      # ---------------------------------------------------------
+      - name: Final summary
+        shell: bash
+        run: |
+          echo "========================================"
+          echo "Observatory update completed"
+          echo "========================================"
+          echo "Repository: RavaliMeka/RavaliMeka"
+          echo "Generator: RavaliMeka/profile-observatory"
+          echo "Mode: ${{ steps.theme.outputs.mode }}"
+          echo "Theme: ${{ steps.theme.outputs.theme }}"
+          echo "File: profile/observatory.svg"
+          echo "========================================"
