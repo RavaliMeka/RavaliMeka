@@ -16,14 +16,19 @@ I'm a DevOps Engineer focused on building reliable, automated, and scalable infr
 - Design and maintain CI/CD pipelines for smooth and reliable deployments
 - Manage containerized applications with Docker and Kubernetes
 - Automate infrastructure provisioning using Terraform
-- Write shell and Python scripts to streamline operations and reduce manual effort
+- Write Shell and Python scripts to streamline operations and reduce manual effort
+- Continuously improve deployment reliability and automation
 
-### 📫 Let's Connect
+### 📊 GitHub Contribution Observatory
 
-Feel free to explore my repositories and reach out if you'd like to collaborate!
+<p align="center">
+  <img
+    src="./profile/observatory.svg"
+    alt="Ravali Meka GitHub Contribution Observatory"
+    width="100%">
+</p>
 
-
-## 🎯 Learning Roadmap
+### 🎯 Learning Roadmap
 
 - [x] Docker & Kubernetes basics
 - [x] CI/CD with Jenkins
@@ -32,21 +37,6 @@ Feel free to explore my repositories and reach out if you'd like to collaborate!
 - [ ] Advanced Shell Scripting
 - [ ] Kubernetes certification (CKA)
 
+### 📫 Let's Connect
 
-
-## GitHub Contribution Observatory
-
-<p align="center">
-  <picture>
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="./profile/observatory-light.svg">
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="./profile/observatory-dark.svg">
-    <img
-      src="./profile/observatory-dark.svg"
-      alt="Ravali Meka GitHub Contribution Observatory"
-      width="100%">
-  </picture>
-</p>
+Feel free to explore my repositories and reach out if you'd like to collaborate!
