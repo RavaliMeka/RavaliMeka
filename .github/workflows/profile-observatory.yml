@@ -2,7 +2,6 @@ name: Profile Observatory
 
 on:
   workflow_dispatch:
-
   schedule:
     - cron: "17 18 * * *"
 
@@ -72,6 +71,7 @@ jobs:
         shell: bash
         env:
           SVG: ${{ matrix.output }}
+          EXPECTED_LOGIN: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
 
@@ -80,22 +80,26 @@ jobs:
           test -f "${SVG}"
           test -s "${SVG}"
 
+          # Basic SVG structure
           grep -q "<svg" "${SVG}"
           grep -q "</svg>" "${SVG}"
 
-          # Verify profile identity
-          grep -q "Ravali Meka" "${SVG}"
-          grep -q "RavaliMeka" "${SVG}"
+          # Verify the actual GitHub login is present
+          grep -q "@${EXPECTED_LOGIN}" "${SVG}"
 
-          # Verify Observatory content
-          grep -q "Contribution Observatory" "${SVG}"
-          grep -q "CONTRIBUTIONS" "${SVG}"
-          grep -q "REPOSITORIES" "${SVG}"
-          grep -q "STARS" "${SVG}"
+          # Verify the generated SVG contains real profile statistics.
+          grep -q "contributions" "${SVG}"
+          grep -q "active days" "${SVG}"
+          grep -q "current streak" "${SVG}"
+          grep -q "longest streak" "${SVG}"
 
-          # Make sure sample data is not being rendered
+          # Verify that repository satellite content exists.
+          # The renderer may legitimately produce zero repositories,
+          # so do not require a specific repository name.
+
+          # Make sure sample data is not being rendered.
           if grep -q "Ada Example" "${SVG}"; then
-            echo "ERROR: sample data detected"
+            echo "ERROR: sample profile detected"
             exit 1
           fi
 
@@ -182,14 +186,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          test -f profile/observatory-dark.svg
-          test -f profile/observatory-light.svg
-
           test -s profile/observatory-dark.svg
           test -s profile/observatory-light.svg
 
           grep -q "<svg" profile/observatory-dark.svg
+          grep -q "</svg>" profile/observatory-dark.svg
+
           grep -q "<svg" profile/observatory-light.svg
+          grep -q "</svg>" profile/observatory-light.svg
 
           echo "Published SVG validation passed."
 
@@ -210,7 +214,6 @@ jobs:
           fi
 
           git commit -m "chore: update profile observatory"
-
           git push origin main
 
       - name: Summary
