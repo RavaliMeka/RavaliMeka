@@ -1,8 +1,8 @@
-```yaml
 name: Profile Observatory
 
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "17 18 * * *"
 
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   generate:
-    name: Generate ${{ matrix.theme }} Observatory
+    name: Generate Observatory
     runs-on: ubuntu-latest
 
     strategy:
@@ -56,6 +56,8 @@ jobs:
 
           mkdir -p profile
 
+          echo "Generating ${THEME} Observatory for ${USERNAME}..."
+
           node .observatory/src/cli.mjs \
             --user "${USERNAME}" \
             --theme "${THEME}" \
@@ -73,17 +75,20 @@ jobs:
         run: |
           set -euo pipefail
 
+          echo "Validating ${SVG}..."
+
           test -f "${SVG}"
           test -s "${SVG}"
 
           grep -q "<svg" "${SVG}"
           grep -q "</svg>" "${SVG}"
 
+          # Verify profile identity
           grep -q "Ravali Meka" "${SVG}"
           grep -q "RavaliMeka" "${SVG}"
 
+          # Verify Observatory content
           grep -q "Contribution Observatory" "${SVG}"
-
           grep -q "CONTRIBUTIONS" "${SVG}"
           grep -q "REPOSITORIES" "${SVG}"
           grep -q "STARS" "${SVG}"
@@ -108,7 +113,7 @@ jobs:
             exit 1
           fi
 
-          echo "Validation passed."
+          echo "SVG validation passed."
 
       - name: Upload generated SVG
         uses: actions/upload-artifact@v4
@@ -149,10 +154,10 @@ jobs:
           mkdir -p profile
 
           cp generated/dark/observatory-dark.svg \
-             profile/observatory-dark.svg
+            profile/observatory-dark.svg
 
           cp generated/light/observatory-light.svg \
-             profile/observatory-light.svg
+            profile/observatory-light.svg
 
           test -s profile/observatory-dark.svg
           test -s profile/observatory-light.svg
@@ -165,10 +170,28 @@ jobs:
         run: |
           set -euo pipefail
 
-          grep -q './profile/observatory-dark.svg' README.md || true
-          grep -q './profile/observatory-light.svg' README.md || true
+          echo "Checking README Observatory references..."
 
-          echo "README validation completed."
+          grep -q './profile/observatory-dark.svg' README.md
+          grep -q './profile/observatory-light.svg' README.md
+
+          echo "README references validated."
+
+      - name: Validate published SVGs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f profile/observatory-dark.svg
+          test -f profile/observatory-light.svg
+
+          test -s profile/observatory-dark.svg
+          test -s profile/observatory-light.svg
+
+          grep -q "<svg" profile/observatory-dark.svg
+          grep -q "<svg" profile/observatory-light.svg
+
+          echo "Published SVG validation passed."
 
       - name: Commit generated Observatory
         shell: bash
@@ -182,11 +205,12 @@ jobs:
           git add profile/observatory-light.svg
 
           if git diff --cached --quiet; then
-            echo "No changes detected."
+            echo "No Observatory changes detected."
             exit 0
           fi
 
           git commit -m "chore: update profile observatory"
+
           git push origin main
 
       - name: Summary
@@ -197,4 +221,5 @@ jobs:
           echo "========================================"
           echo "Dark:  profile/observatory-dark.svg"
           echo "Light: profile/observatory-light.svg"
-```
+          echo "Repository: RavaliMeka/RavaliMeka"
+          echo "Generator: RavaliMeka/profile-observatory"
