@@ -31,3 +31,15 @@ Feel free to explore my repositories and reach out if you'd like to collaborate!
 - [ ] Helm charts
 - [ ] Advanced Shell Scripting
 - [ ] Kubernetes certification (CKA)
+
+## GitHub Contribution Observatory
+
+<picture>
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="./profile/observatory-light.svg">
+  <img
+    alt="Ravali Meka GitHub Contribution Observatory"
+    src="./profile/observatory-dark.svg"
+    width="100%">
+</picture>
