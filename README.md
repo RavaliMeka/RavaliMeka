@@ -34,12 +34,19 @@ Feel free to explore my repositories and reach out if you'd like to collaborate!
 
 ## GitHub Contribution Observatory
 
-<picture>
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="./profile/observatory-light.svg">
-  <img
-    alt="Ravali Meka GitHub Contribution Observatory"
-    src="./profile/observatory-dark.svg"
-    width="100%">
-</picture>
+## GitHub Contribution Observatory
+
+<p align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="./profile/observatory-light.svg">
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="./profile/observatory-dark.svg">
+    <img
+      src="./profile/observatory-dark.svg"
+      alt="Ravali Meka GitHub Contribution Observatory"
+      width="100%">
+  </picture>
+</p>
