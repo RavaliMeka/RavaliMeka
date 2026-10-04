@@ -1,0 +1,36 @@
+name: Test Git3D Universe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Test published Git3D Universe Action
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+
+      - name: Generate Git3D Universe
+        uses: SandeepKomal/Git3D-Universe@v1.0.0
+        with:
+          username: ${{ github.repository_owner }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          theme: aurora
+          output: profile/git3d-universe.svg
+
+      - name: Validate generated SVG
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -s profile/git3d-universe.svg
+          grep -q "<svg" profile/git3d-universe.svg
+          grep -q "</svg>" profile/git3d-universe.svg
+
+          echo "Git3D Universe generated successfully."
+          wc -c profile/git3d-universe.svg
