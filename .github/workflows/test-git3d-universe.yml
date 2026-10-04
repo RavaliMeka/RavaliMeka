@@ -3,6 +3,11 @@ name: Git3D Universe
 on:
   workflow_dispatch:
 
+  schedule:
+    # Run every hour at minute 17.
+    # Using minute 17 instead of minute 0 helps avoid peak-hour congestion.
+    - cron: "17 * * * *"
+
 permissions:
   contents: write
 
