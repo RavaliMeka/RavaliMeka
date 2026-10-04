@@ -21,12 +21,7 @@ I'm a DevOps Engineer focused on building reliable, automated, and scalable infr
 
 ### 📊 GitHub Contribution Observatory
 
-<p align="center">
-  <img
-    src="./profile/observatory.svg"
-    alt="Ravali Meka GitHub Contribution Observatory"
-    width="100%">
-</p>
+![Git3D Universe](./profile/git3d-universe.svg)
 
 ### 🎯 Learning Roadmap
 
