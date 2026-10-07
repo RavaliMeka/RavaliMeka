@@ -44,7 +44,6 @@
 <div align="center">
 
 <a href="https://github.com/RavaliMeka"><img src="./cards/connect-github.svg" alt="GitHub" width="260"></a>
-<a href="mailto:mekaravali239@gmail.com"><img src="./cards/connect-email.svg" alt="Email" width="260"></a>
 
 </div>
 
