@@ -2,9 +2,9 @@
   "style": "showcase",
   "theme": "auto",
   "order": "",
-  "featured": "",
+  "featured": "RavaliMeka",
   "adaptive": true,
-  "animate": false,
+  "animate": true,
   "heatmap": true,
   "credit": true,
   "siteUrl": "https://sandeepkomal.github.io/README-Glassfolio/",
@@ -15,10 +15,11 @@
   "banner": true,
   "cards": true,
   "bars": true,
-  "pie": false,
+  "pie": true,
   "timeline": true,
   "proj": true,
-  "recent": false,
+  "recent": true,
   "links": true,
-  "universe": false
+  "universe": true,
+  "wave": true
 }
