@@ -1,8 +1,8 @@
 {
   "style": "changelog",
-  "theme": "cyber",
+  "theme": "paper",
   "order": "",
-  "featured": "RavaliMeka",
+  "featured": "",
   "adaptive": true,
   "animate": true,
   "heatmap": true,
