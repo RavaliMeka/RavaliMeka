@@ -11,6 +11,7 @@
 <picture><source media="(prefers-color-scheme: dark)" srcset="./cards/stats.svg"><img src="./cards/stats-light.svg" alt="GitHub stats for RavaliMeka" width="412"></picture>
 <picture><source media="(prefers-color-scheme: dark)" srcset="./cards/streak.svg"><img src="./cards/streak-light.svg" alt="Contribution streak for RavaliMeka" width="412"></picture>
 <picture><source media="(prefers-color-scheme: dark)" srcset="./cards/activity.svg"><img src="./cards/activity-light.svg" alt="Contribution heatmap for RavaliMeka" width="100%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/universe.svg"><img src="./cards/universe-light.svg" alt="Contribution universe for RavaliMeka" width="100%"></picture>
 
 </div>
 
@@ -51,7 +52,6 @@
 <div align="center">
 
 <a href="https://github.com/RavaliMeka"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/connect-github.svg"><img src="./cards/connect-github-light.svg" alt="GitHub" width="270"></picture></a>
-<a href="mailto:mekaravali239@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/connect-email.svg"><img src="./cards/connect-email-light.svg" alt="Email" width="270"></picture></a>
 
 </div>
 

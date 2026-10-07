@@ -19,5 +19,6 @@
   "timeline": true,
   "proj": true,
   "recent": true,
-  "links": true
+  "links": true,
+  "universe": true
 }

@@ -170,9 +170,10 @@
     if (surface) { p.bg1 = surface.bg1; p.bg2 = surface.bg2; p.line = surface.line; p.native = true; }
     return p;
   }
+  // flat, exactly the page colour, so the only thing marking a card is GitHub's own hairline border
   var NATIVE = {
-    dark:  { bg1: "#0d1117", bg2: "#151b23", line: "#3d444d" },   // GitHub dark: page, raised surface, border
-    light: { bg1: "#ffffff", bg2: "#f6f8fa", line: "#d1d9e0" }    // GitHub light
+    dark:  { bg1: "#0d1117", bg2: "#0d1117", line: "#3d444d" },   // GitHub dark: page, border
+    light: { bg1: "#ffffff", bg2: "#ffffff", line: "#d1d9e0" }    // GitHub light
   };
 
 
@@ -279,7 +280,7 @@
    * A link like ?user=DevopsNimbus&theme=cyber reopens the tool with the same choices, so people can share their setup. */
   var SHARE_TEXT = ["role", "tagline", "stack", "linkedin"];
   var SHARE_ACCENTS = ["accent1", "accent2"];
-  var SHARE_FLAGS = ["adaptive", "animate", "heatmap", "credit", "banner", "cards", "bars", "pie", "timeline", "proj", "recent", "links"];
+  var SHARE_FLAGS = ["adaptive", "animate", "heatmap", "credit", "banner", "cards", "bars", "pie", "timeline", "proj", "recent", "links", "universe"];
 
   /** Only values that differ from the defaults go into the link, so links stay short. */
   function toQuery(user, options) {
@@ -343,7 +344,7 @@
 
   var DEFAULTS = {
     style: "showcase", theme: "auto", accent1: "", accent2: "", order: "", featured: "", adaptive: true, mode: "", suffix: "", animate: true, heatmap: true, credit: true, siteUrl: "", tagline: "", role: "", stack: "", linkedin: "",
-    banner: true, cards: true, bars: true, pie: false, timeline: true, proj: true, recent: false, links: true
+    banner: true, cards: true, bars: true, pie: false, timeline: true, proj: true, recent: false, links: true, universe: false
   };
   function withDefaults(o) {
     var out = {}, k;
@@ -481,6 +482,8 @@
   }
   /** Which of the two new cards the README includes. */
   function wantsChangelog(m, o) { return !!(o.cards && o.proj && o.style === "changelog" && changelogData(m).length); }
+  /** The 3D contribution universe: opt-in, card mode only, and only when there is activity to draw. */
+  function wantsUniverse(m, o) { return !!(o.cards && o.universe && m.activity && m.activity.daily && m.activity.daily.length); }
   function wantsRecent(m, o) { return !!(o.cards && o.recent && m.recent && m.recent.length); }
 
   var MAX_PROJECT_CARDS = 6;
@@ -528,6 +531,7 @@
     var grid = [pic(o, "cards/stats.svg", 'alt="GitHub stats for ' + esc(m.login) + '" width="' + HALF + '"')];
     if (two) grid.push(pic(o, "cards/streak.svg", 'alt="Contribution streak for ' + esc(m.login) + '" width="' + HALF + '"'));
     if (heat) grid.push(pic(o, "cards/activity.svg", 'alt="Contribution heatmap for ' + esc(m.login) + '" width="100%"'));
+    if (wantsUniverse(m, o)) grid.push(pic(o, "cards/universe.svg", 'alt="Contribution universe for ' + esc(m.login) + '" width="100%"'));
     out.push(grid.join("\n"), "");
     out.push("</div>", "");
     return out;
@@ -636,8 +640,8 @@
     out.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(m.name) + '">');
     out.push("<defs>" +
       '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + p.bg1 + '"/><stop offset="1" stop-color="' + p.bg2 + '"/></linearGradient>' +
-      '<radialGradient id="au1"><stop offset="0" stop-color="' + p.a1 + '" stop-opacity="' + (p.native ? (L ? 0.14 : 0.22) : (L ? 0.32 : 0.5)) + '"/><stop offset="1" stop-color="' + p.a1 + '" stop-opacity="0"/></radialGradient>' +
-      '<radialGradient id="au2"><stop offset="0" stop-color="' + p.a2 + '" stop-opacity="' + (p.native ? (L ? 0.12 : 0.2) : (L ? 0.3 : 0.5)) + '"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="au1"><stop offset="0" stop-color="' + p.a1 + '" stop-opacity="' + (L ? 0.32 : 0.5) + '"/><stop offset="1" stop-color="' + p.a1 + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="au2"><stop offset="0" stop-color="' + p.a2 + '" stop-opacity="' + (L ? 0.3 : 0.5) + '"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="0"/></radialGradient>' +
       '<linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + (L ? "#ffffff" : I) + '" stop-opacity="' + (L ? 0.95 : 0.45) + '"/><stop offset="0.5" stop-color="' + I + '" stop-opacity="0.06"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="0.6"/></linearGradient>' +
       '<linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="' + (L ? 0.95 : 0.65) + '"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>' +
       '<linearGradient id="acc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + p.a1 + '"/><stop offset="1" stop-color="' + p.a2 + '"/></linearGradient>' +
@@ -648,10 +652,12 @@
       "</defs>" + fxStyle(p, W));
     out.push('<g clip-path="url(#clip)">');
     out.push('<rect width="' + W + '" height="' + H + '" fill="url(#bg)"/>');
-    out.push('<rect width="' + W + '" height="' + H + '" fill="url(#dots)"/>');
-    out.push("<g" + fx(p, "d1") + '><circle cx="1060" cy="-40" r="520" fill="url(#au1)"/></g>');
-    out.push("<g" + fx(p, "d2") + '><circle cx="80" cy="380" r="470" fill="url(#au2)"/></g>');
-    out.push('<circle cx="640" cy="330" r="260" fill="url(#au1)" opacity="0.5"/>');
+    if (!p.native) {                   // a native-surface banner is the page itself: no dots, no aurora wash
+      out.push('<rect width="' + W + '" height="' + H + '" fill="url(#dots)"/>');
+      out.push("<g" + fx(p, "d1") + '><circle cx="1060" cy="-40" r="520" fill="url(#au1)"/></g>');
+      out.push("<g" + fx(p, "d2") + '><circle cx="80" cy="380" r="470" fill="url(#au2)"/></g>');
+      out.push('<circle cx="640" cy="330" r="260" fill="url(#au1)" opacity="0.5"/>');
+    }
 
     // orbit system: three rings, a glowing arc and one node per repo (up to 9); the whole system turns slowly
     var ox = 1010, oy = 160, radii = [66, 106, 144];
@@ -673,12 +679,12 @@
     out.push('<circle cx="' + ox + '" cy="' + oy + '" r="50" fill="' + I + '" fill-opacity="0.06" stroke="url(#acc)" stroke-width="1.5"/>');
     out.push('<text x="' + ox + '" y="' + (oy + 12) + '" text-anchor="middle" font-family="' + SANS + '" font-size="34" font-weight="800" letter-spacing="1" fill="url(#acc)">' + esc(initials(m)) + "</text>");
 
-    // glass sheen over everything (a native-surface banner keeps only the moving shine, and GitHub's hairline border)
+    // glass sheen over everything (a native-surface banner gets GitHub's hairline border instead)
     if (!p.native) {
       out.push('<rect width="' + W + '" height="' + H + '" fill="' + I + '" fill-opacity="0.03"/>');
       out.push('<rect x="40" y="0.6" width="' + (W - 80) + '" height="1.4" fill="url(#hl)"/>');
+      out.push('<rect x="0" y="0.5" width="' + Math.round(W * 0.28) + '" height="1.8" fill="url(#hl)"' + fx(p, "shine") + "/>");
     }
-    out.push('<rect x="0" y="0.5" width="' + Math.round(W * 0.28) + '" height="1.8" fill="url(#hl)"' + fx(p, "shine") + "/>");
     out.push("</g>");
     out.push(p.native
       ? '<rect x="0.5" y="0.5" width="' + (W - 1) + '" height="' + (H - 1) + '" rx="15.5" fill="none" stroke="' + p.line + '"/>'
@@ -736,6 +742,6 @@
     palette: palette, streaks: streaks, weeklyCounts: weeklyCounts, daysFromEvents: daysFromEvents,
     makeActivity: makeActivity, MAX_PROJECT_CARDS: MAX_PROJECT_CARDS, toolList: toolList, connectItems: connectItems, designation: designation,
     THEMES: THEMES, THEME_ORDER: THEME_ORDER, fxStyle: fxStyle, fx: fx,
-    toQuery: toQuery, fromQuery: fromQuery, contrast: contrast, tips: tips, changelogData: changelogData, wantsChangelog: wantsChangelog, wantsRecent: wantsRecent, hash: hash, initials: initials, subtitle: subtitle, chipNames: chipNames, paletteFor: paletteFor, pickProjects: pickProjects, sectionOrder: sectionOrder, SECTIONS: SECTIONS, validHex: validHex
+    toQuery: toQuery, fromQuery: fromQuery, contrast: contrast, tips: tips, changelogData: changelogData, wantsChangelog: wantsChangelog, wantsRecent: wantsRecent, wantsUniverse: wantsUniverse, hash: hash, initials: initials, subtitle: subtitle, chipNames: chipNames, paletteFor: paletteFor, mixHex: mixHex, pickProjects: pickProjects, sectionOrder: sectionOrder, SECTIONS: SECTIONS, validHex: validHex
   };
 });

@@ -5,11 +5,11 @@
  * ReadmeCards.buildCards(model, options) -> [{ name: "cards/stats.svg", data: "<svg…>" }, …]
  */
 (function (root, factory) {
-  var core = (typeof module === "object" && module.exports) ? require("./core.js") : root.ReadmeCore;
-  var api = factory(core);
-  if (typeof module === "object" && module.exports) module.exports = api;
+  var node = typeof module === "object" && module.exports;
+  var api = factory(node ? require("./core.js") : root.ReadmeCore, node ? require("./universe.js") : root.ReadmeUniverse);
+  if (node) module.exports = api;
   else root.ReadmeCards = api;
-})(typeof self !== "undefined" ? self : this, function (core) {
+})(typeof self !== "undefined" ? self : this, function (core, universe) {
   "use strict";
 
   var SANS = "system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -93,15 +93,15 @@
     var L = p.light;
     return "<defs>" +
       '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + p.bg1 + '"/><stop offset="1" stop-color="' + p.bg2 + '"/></linearGradient>' +
-      '<radialGradient id="au1"><stop offset="0" stop-color="' + p.a1 + '" stop-opacity="' + (p.native ? (L ? 0.1 : 0.16) : (L ? 0.28 : 0.42)) + '"/><stop offset="1" stop-color="' + p.a1 + '" stop-opacity="0"/></radialGradient>' +
-      '<radialGradient id="au2"><stop offset="0" stop-color="' + p.a2 + '" stop-opacity="' + (p.native ? (L ? 0.09 : 0.14) : (L ? 0.26 : 0.4)) + '"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="au1"><stop offset="0" stop-color="' + p.a1 + '" stop-opacity="' + (L ? 0.28 : 0.42) + '"/><stop offset="1" stop-color="' + p.a1 + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="au2"><stop offset="0" stop-color="' + p.a2 + '" stop-opacity="' + (L ? 0.26 : 0.4) + '"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="0"/></radialGradient>' +
       '<linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + (L ? "#ffffff" : p.ink) + '" stop-opacity="' + (L ? 0.95 : 0.42) + '"/><stop offset="0.45" stop-color="' + p.ink + '" stop-opacity="0.07"/><stop offset="1" stop-color="' + p.a2 + '" stop-opacity="' + (L ? 0.5 : 0.55) + '"/></linearGradient>' +
       '<linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="' + (L ? 0.95 : 0.6) + '"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>' +
       '<linearGradient id="acc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + p.a1 + '"/><stop offset="1" stop-color="' + p.a2 + '"/></linearGradient>' +
       '<linearGradient id="accv" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="' + p.a2 + '"/><stop offset="1" stop-color="' + p.a1 + '"/></linearGradient>' +
       '<linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + p.a1 + '" stop-opacity="0.6"/><stop offset="1" stop-color="' + p.a1 + '" stop-opacity="0"/></linearGradient>' +
       '<filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
-      '<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="' + p.ink + '" stroke-opacity="' + (p.native ? 0.025 : (L ? 0.05 : 0.04)) + '"/></pattern>' +
+      '<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="' + p.ink + '" stroke-opacity="' + (L ? 0.05 : 0.04) + '"/></pattern>' +
       '<clipPath id="clip"><rect width="' + W + '" height="' + H + '" rx="' + RADIUS(p) + '"/></clipPath>' +
       "</defs>" + core.fxStyle(p, W);
   }
@@ -114,13 +114,14 @@
       defs(p, W, H) +
       '<g clip-path="url(#clip)">' +
       '<rect width="' + W + '" height="' + H + '" fill="url(#bg)"/>' +
-      '<rect width="' + W + '" height="' + H + '" fill="url(#grid)"/>' +
-      "<g" + core.fx(p, "d1") + '><circle cx="' + (W * 0.92).toFixed(0) + '" cy="' + (-H * 0.18).toFixed(0) + '" r="' + (R * 0.6).toFixed(0) + '" fill="url(#au1)"/></g>' +
-      "<g" + core.fx(p, "d2") + '><circle cx="' + (W * 0.04).toFixed(0) + '" cy="' + (H * 1.18).toFixed(0) + '" r="' + (R * 0.55).toFixed(0) + '" fill="url(#au2)"/></g>' +
+      // a native-surface card is the page itself (no grid, aurora or sheen); a themed one is a glass panel
       (p.native ? "" :
+        '<rect width="' + W + '" height="' + H + '" fill="url(#grid)"/>' +
+        "<g" + core.fx(p, "d1") + '><circle cx="' + (W * 0.92).toFixed(0) + '" cy="' + (-H * 0.18).toFixed(0) + '" r="' + (R * 0.6).toFixed(0) + '" fill="url(#au1)"/></g>' +
+        "<g" + core.fx(p, "d2") + '><circle cx="' + (W * 0.04).toFixed(0) + '" cy="' + (H * 1.18).toFixed(0) + '" r="' + (R * 0.55).toFixed(0) + '" fill="url(#au2)"/></g>' +
         '<rect width="' + W + '" height="' + H + '" fill="' + p.ink + '" fill-opacity="0.035"/>' +
-        '<rect x="28" y="0.6" width="' + (W - 56) + '" height="1.2" fill="url(#hl)"/>') +
-      '<rect x="0" y="0.5" width="' + Math.round(W * 0.28) + '" height="1.6" fill="url(#hl)"' + core.fx(p, "shine") + "/>" +
+        '<rect x="28" y="0.6" width="' + (W - 56) + '" height="1.2" fill="url(#hl)"/>' +
+        '<rect x="0" y="0.5" width="' + Math.round(W * 0.28) + '" height="1.6" fill="url(#hl)"' + core.fx(p, "shine") + "/>") +
       "</g>" +
       // a native-surface card gets GitHub's own 1px border, like the boxes around it; a themed one keeps its glass edge
       (p.native
@@ -378,6 +379,14 @@
       out += '<rect x="' + (x + 20) + '" y="' + (yy + 9) + '" width="' + Math.max(3, it.frac * bw).toFixed(1) + '" height="3" rx="1.5" fill="' + it.color + '"/>';
     });
     return { svg: out, end: Math.max(cy + r + sw / 2, top + (rows - 1) * rowH + 12) + 26 };
+  }
+
+  /** The 3D contribution universe (universe.js), fed from the same model as the other cards: no extra token or request. */
+  function universeCard(m, o, p) {
+    var repos = m.all.slice().sort(function (a, b) { return b.stars - a.stars; }).map(function (r, i) {
+      return { name: r.name, stars: r.stars || 0, color: r.lang ? langColor(r.lang, i, p) : null };
+    });
+    return universe.buildUniverse({ name: m.name || m.login, login: m.login, weeks: universe.toWeeks(m.activity.daily, m.activity.start), repos: repos }, p, { animate: p.anim });
   }
 
   /* ---------- timeline card ---------- */
@@ -659,6 +668,7 @@
         files.push({ name: "cards/project-" + (i + 1) + ".svg", data: projectCard(m, r, p) });
       });
     }
+    if (core.wantsUniverse(m, o)) files.push({ name: "cards/universe.svg", data: universeCard(m, o, p) });
     if (o.links) {
       core.connectItems(m, o).forEach(function (it) {
         files.push({ name: "cards/connect-" + it.key + ".svg", data: connectCard(m, it, p) });
