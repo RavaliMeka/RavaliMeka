@@ -1,0 +1,23 @@
+{
+  "style": "showcase",
+  "theme": "auto",
+  "order": "",
+  "featured": "RavaliMeka",
+  "adaptive": true,
+  "animate": true,
+  "heatmap": true,
+  "credit": true,
+  "siteUrl": "https://sandeepkomal.github.io/README-Glassfolio/",
+  "tagline": "CODE  DEPLOY  MONITOR",
+  "role": "Cloud Engineer",
+  "stack": "AWS, Terraform , Docker , EKS",
+  "linkedin": "",
+  "banner": true,
+  "cards": true,
+  "bars": true,
+  "pie": true,
+  "timeline": true,
+  "proj": true,
+  "recent": true,
+  "links": true
+}
