@@ -22,6 +22,11 @@
 
 </div>
 
+```mermaid
+pie showData title Repos by language
+  "JavaScript" : 1
+```
+
 ## Timeline
 
 <div align="center">
@@ -51,6 +56,7 @@
 <div align="center">
 
 <a href="https://github.com/RavaliMeka"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/connect-github.svg"><img src="./cards/connect-github-light.svg" alt="GitHub" width="270"></picture></a>
+<a href="mailto:mekaravali239@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/connect-email.svg"><img src="./cards/connect-email-light.svg" alt="Email" width="270"></picture></a>
 
 </div>
 
