@@ -8,10 +8,17 @@
 
 <div align="center">
 
-<img src="./cards/stats.svg" alt="GitHub stats for RavaliMeka" width="400">
-<img src="./cards/streak.svg" alt="Contribution streak for RavaliMeka" width="400">
-
+<img src="./cards/stats.svg" alt="GitHub stats for RavaliMeka" width="412">
+<img src="./cards/streak.svg" alt="Contribution streak for RavaliMeka" width="412">
 <img src="./cards/activity.svg" alt="Contribution heatmap for RavaliMeka" width="100%">
+
+</div>
+
+## Stack
+
+<div align="center">
+
+<img src="./cards/languages.svg" alt="Languages and tools for RavaliMeka" width="100%">
 
 </div>
 
@@ -27,7 +34,7 @@
 
 <div align="center">
 
-<a href="https://github.com/RavaliMeka/RavaliMeka"><img src="./cards/project-1.svg" alt="RavaliMeka" width="400"></a>
+<a href="https://github.com/RavaliMeka/RavaliMeka"><img src="./cards/project-1.svg" alt="RavaliMeka" width="412"></a>
 
 </div>
 
@@ -43,7 +50,7 @@
 
 <div align="center">
 
-<a href="https://github.com/RavaliMeka"><img src="./cards/connect-github.svg" alt="GitHub" width="260"></a>
+<a href="https://github.com/RavaliMeka"><img src="./cards/connect-github.svg" alt="GitHub" width="270"></a>
 
 </div>
 
