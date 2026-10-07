@@ -1,68 +1,52 @@
-# Hi there, I'm Ravali Meka 👋
-
-## DevOps Engineer
-
-I'm a DevOps Engineer focused on building reliable, automated, and scalable infrastructure. I enjoy streamlining deployment pipelines, containerizing applications, and driving automation across the software delivery lifecycle.
-
-### 🛠️ Skills
-
-- **Containerization & Orchestration:** Docker, Kubernetes
-- **Infrastructure as Code:** Terraform
-- **CI/CD & Automation:** CI/CD Pipelines, Automation Scripting
-- **Scripting & Programming:** Shell, Python
-
-### 🌱 What I Do
-
-- Design and maintain CI/CD pipelines for smooth and reliable deployments
-- Manage containerized applications with Docker and Kubernetes
-- Automate infrastructure provisioning using Terraform
-- Write Shell and Python scripts to streamline operations and reduce manual effort
-- Continuously improve deployment reliability and automation
-
-### 📊 GitHub Contribution Observatory
-
-![Git3D Universe](./profile/git3d-universe.svg)
-
-### 🎯 Learning Roadmap
-
-- [x] Docker & Kubernetes basics
-- [x] CI/CD with Jenkins
-- [ ] Ansible automation
-- [ ] Helm charts
-- [ ] Advanced Shell Scripting
-- [ ] Kubernetes certification (CKA)
-
-### 📫 Let's Connect
-
-Feel free to explore my repositories and reach out if you'd like to collaborate!
+<div align="center">
 
 <img src="./banner.svg" alt="Ravali Meka" width="100%">
 
-# Ravali Meka
+</div>
 
-## About
+## GitHub stats
 
-```json
-{
-  "name": "Ravali Meka",
-  "handle": "RavaliMeka",
-  "on_github_since": "2026"
-}
-```
+<div align="center">
+
+<img src="./cards/stats.svg" alt="GitHub stats for RavaliMeka" width="400">
+<img src="./cards/streak.svg" alt="Contribution streak for RavaliMeka" width="400">
+
+<img src="./cards/activity.svg" alt="Contribution heatmap for RavaliMeka" width="100%">
+
+</div>
+
+## Timeline
+
+<div align="center">
+
+<img src="./cards/timeline.svg" alt="Timeline of repositories created by RavaliMeka" width="100%">
+
+</div>
 
 ## Projects
 
-| Repo | What it does | Lang | Stars |
-| --- | --- | --- | ---: |
-| [RavaliMeka](https://github.com/RavaliMeka/RavaliMeka) | - | - | 0 |
+<div align="center">
+
+<a href="https://github.com/RavaliMeka/RavaliMeka"><img src="./cards/project-1.svg" alt="RavaliMeka" width="400"></a>
+
+</div>
 
 ## Recently pushed
 
-- [RavaliMeka](https://github.com/RavaliMeka/RavaliMeka), 2026-10-06
+<div align="center">
 
-## Links
+<img src="./cards/recent.svg" alt="Recently pushed repositories of RavaliMeka" width="100%">
 
-- GitHub: [RavaliMeka](https://github.com/RavaliMeka)
+</div>
+
+## Connect
+
+<div align="center">
+
+<a href="https://github.com/RavaliMeka"><img src="./cards/connect-github.svg" alt="GitHub" width="260"></a>
+<a href="mailto:mekaravali239@gmail.com"><img src="./cards/connect-email.svg" alt="Email" width="260"></a>
+
+</div>
 
 ---
-<sub>Patched together from public GitHub data.</sub>
+<sub>Patched together from public GitHub data · made with <a href="https://sandeepkomal.github.io/README-Glassfolio/">Patch your profile</a></sub>
