@@ -30,11 +30,11 @@
 
 </div>
 
-## Projects
+## Changelog
 
 <div align="center">
 
-<a href="https://github.com/RavaliMeka/RavaliMeka"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/project-1.svg"><img src="./cards/project-1-light.svg" alt="RavaliMeka" width="412"></picture></a>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/changelog.svg"><img src="./cards/changelog-light.svg" alt="Changelog of repositories created by RavaliMeka" width="100%"></picture>
 
 </div>
 
