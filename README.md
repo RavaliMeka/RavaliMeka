@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./banner.svg" alt="Ravali Meka" width="100%">
+<picture><source media="(prefers-color-scheme: dark)" srcset="./banner.svg"><img src="./banner-light.svg" alt="Ravali Meka, Cloud Engineer" width="100%"></picture>
 
 </div>
 
@@ -8,9 +8,9 @@
 
 <div align="center">
 
-<img src="./cards/stats.svg" alt="GitHub stats for RavaliMeka" width="412">
-<img src="./cards/streak.svg" alt="Contribution streak for RavaliMeka" width="412">
-<img src="./cards/activity.svg" alt="Contribution heatmap for RavaliMeka" width="100%">
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/stats.svg"><img src="./cards/stats-light.svg" alt="GitHub stats for RavaliMeka" width="412"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/streak.svg"><img src="./cards/streak-light.svg" alt="Contribution streak for RavaliMeka" width="412"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/activity.svg"><img src="./cards/activity-light.svg" alt="Contribution heatmap for RavaliMeka" width="100%"></picture>
 
 </div>
 
@@ -18,7 +18,7 @@
 
 <div align="center">
 
-<img src="./cards/languages.svg" alt="Languages and tools for RavaliMeka" width="100%">
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/languages.svg"><img src="./cards/languages-light.svg" alt="Languages and tools for RavaliMeka" width="100%"></picture>
 
 </div>
 
@@ -26,7 +26,7 @@
 
 <div align="center">
 
-<img src="./cards/timeline.svg" alt="Timeline of repositories created by RavaliMeka" width="100%">
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/timeline.svg"><img src="./cards/timeline-light.svg" alt="Timeline of repositories created by RavaliMeka" width="100%"></picture>
 
 </div>
 
@@ -34,7 +34,7 @@
 
 <div align="center">
 
-<a href="https://github.com/RavaliMeka/RavaliMeka"><img src="./cards/project-1.svg" alt="RavaliMeka" width="412"></a>
+<a href="https://github.com/RavaliMeka/RavaliMeka"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/project-1.svg"><img src="./cards/project-1-light.svg" alt="RavaliMeka" width="412"></picture></a>
 
 </div>
 
@@ -42,7 +42,7 @@
 
 <div align="center">
 
-<img src="./cards/recent.svg" alt="Recently pushed repositories of RavaliMeka" width="100%">
+<picture><source media="(prefers-color-scheme: dark)" srcset="./cards/recent.svg"><img src="./cards/recent-light.svg" alt="Recently pushed repositories of RavaliMeka" width="100%"></picture>
 
 </div>
 
@@ -50,7 +50,7 @@
 
 <div align="center">
 
-<a href="https://github.com/RavaliMeka"><img src="./cards/connect-github.svg" alt="GitHub" width="270"></a>
+<a href="https://github.com/RavaliMeka"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/connect-github.svg"><img src="./cards/connect-github-light.svg" alt="GitHub" width="270"></picture></a>
 
 </div>
 
