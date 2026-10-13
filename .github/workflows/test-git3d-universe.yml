@@ -1,7 +1,17 @@
-name: Git3D Universe v2.0.1 Test
+# Copy this file into:
+#
+# .github/workflows/git3d-universe.yml
+#
+# Change the timezone below to your own IANA timezone.
+
+name: Git3D Universe
 
 on:
   workflow_dispatch:
+
+  # Check once per hour.
+  # The actual theme is calculated using the configured
+  # local timezone.
   schedule:
     - cron: "17 * * * *"
 
@@ -13,18 +23,24 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  # Examples:
+  # India: Asia/Kolkata
+  # New York: America/New_York
+  # London: Europe/London
+  # Tokyo: Asia/Tokyo
   GIT3D_TIMEZONE: Asia/Kolkata
+
   GIT3D_DAY_START: "06"
   GIT3D_NIGHT_START: "18"
 
 jobs:
   generate:
-    name: Generate and Validate Git3D Universe
+    name: Generate Git3D Universe
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout profile repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
           fetch-depth: 0
 
@@ -38,40 +54,66 @@ jobs:
         run: |
           set -euo pipefail
 
-          HOUR=$(TZ="$TIMEZONE" date +%H)
-
-          if [ "$HOUR" -ge "$DAY_START" ] && [ "$HOUR" -lt "$NIGHT_START" ]; then
-            echo "theme=daylight" >> "$GITHUB_OUTPUT"
-          else
-            echo "theme=aurora" >> "$GITHUB_OUTPUT"
+          if ! TZ="${TIMEZONE}" date >/dev/null 2>&1; then
+            echo "ERROR: Invalid IANA timezone: ${TIMEZONE}"
+            exit 1
           fi
 
-      - name: Generate Git3D Universe v2.0.1
-        uses: SandeepKomal/Git3D-Universe@v2.0.1
+          HOUR=$(TZ="${TIMEZONE}" date +%H)
+          LOCAL_DATE=$(TZ="${TIMEZONE}" date '+%Y-%m-%d %H:%M:%S %Z')
+
+          echo "Local time: ${LOCAL_DATE}"
+
+          if [ "${HOUR}" -ge "${DAY_START}" ] && [ "${HOUR}" -lt "${NIGHT_START}" ]; then
+            THEME="daylight"
+            MODE="DAY"
+          else
+            THEME="aurora"
+            MODE="NIGHT"
+          fi
+
+          echo "Theme: ${THEME}"
+          echo "Mode: ${MODE}"
+
+          echo "theme=${THEME}" >> "$GITHUB_OUTPUT"
+          echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Git3D Universe
+        uses: SandeepKomal/Git3D-Universe@v2.0.0
         with:
           username: ${{ github.repository_owner }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           theme: ${{ steps.theme.outputs.theme }}
           output: profile/git3d-universe.svg
 
-      - name: Validate generated SVG and creator credit
-        shell: bash
+      - name: Validate Git3D Universe
+        env:
+          SVG: profile/git3d-universe.svg
+          EXPECTED_LOGIN: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
 
-          SVG="profile/git3d-universe.svg"
+          test -s "${SVG}"
+          grep -q "<svg" "${SVG}"
+          grep -q "</svg>" "${SVG}"
+          grep -qi "@${EXPECTED_LOGIN}" "${SVG}"
+          grep -q "contributions" "${SVG}"
+          grep -q "active days" "${SVG}"
+          grep -q "current streak" "${SVG}"
+          grep -q "longest streak" "${SVG}"
 
-          test -s "$SVG"
-          grep -q "<svg" "$SVG"
-          grep -q "</svg>" "$SVG"
-          grep -Fq "crafted by Sandeep Komal Pothu" "$SVG"
+          if grep -q "Ada Example" "${SVG}" || grep -q "ada-example" "${SVG}"; then
+            echo "ERROR: Sample profile detected."
+            exit 1
+          fi
 
-          echo "SVG generated successfully."
-          echo "Creator credit verified."
-          echo "Theme: ${{ steps.theme.outputs.theme }}"
+          SIZE=$(wc -c < "${SVG}")
+          if [ "${SIZE}" -lt 5000 ]; then
+            echo "ERROR: Generated SVG is unexpectedly small."
+            exit 1
+          fi
 
-      - name: Commit generated SVG
-        shell: bash
+      - name: Commit Git3D Universe
         run: |
           set -euo pipefail
 
@@ -85,5 +127,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: update Git3D Universe v2.0.1"
+          git commit -m "chore: update Git3D Universe (${{ steps.theme.outputs.mode }})"
           git push origin main
+
