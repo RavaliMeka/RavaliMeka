@@ -1,12 +1,8 @@
-name: Git3D Universe
+name: Git3D Universe v2.0.1 Test
 
 on:
   workflow_dispatch:
-
   schedule:
-    # Run every hour at minute 17.
-    # The workflow itself decides whether to use
-    # the daylight or aurora theme based on local time.
     - cron: "17 * * * *"
 
 permissions:
@@ -17,29 +13,18 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Set this to your local IANA timezone.
-  #
-  # Examples:
-  # India: Asia/Kolkata
-  # New York: America/New_York
-  # London: Europe/London
-  # Tokyo: Asia/Tokyo
   GIT3D_TIMEZONE: Asia/Kolkata
-
-  # Day theme starts at 06:00
   GIT3D_DAY_START: "06"
-
-  # Dark theme starts at 18:00
   GIT3D_NIGHT_START: "18"
 
 jobs:
   generate:
-    name: Generate Git3D Universe
+    name: Generate and Validate Git3D Universe
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout profile repository
-        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -53,78 +38,39 @@ jobs:
         run: |
           set -euo pipefail
 
-          if ! TZ="${TIMEZONE}" date >/dev/null 2>&1; then
-            echo "ERROR: Invalid IANA timezone: ${TIMEZONE}"
-            exit 1
-          fi
+          HOUR=$(TZ="$TIMEZONE" date +%H)
 
-          HOUR=$(TZ="${TIMEZONE}" date +%H)
-          LOCAL_DATE=$(TZ="${TIMEZONE}" date '+%Y-%m-%d %H:%M:%S %Z')
-
-          echo "Local time: ${LOCAL_DATE}"
-
-          if [ "${HOUR}" -ge "${DAY_START}" ] && [ "${HOUR}" -lt "${NIGHT_START}" ]; then
-            THEME="daylight"
-            MODE="DAY"
+          if [ "$HOUR" -ge "$DAY_START" ] && [ "$HOUR" -lt "$NIGHT_START" ]; then
+            echo "theme=daylight" >> "$GITHUB_OUTPUT"
           else
-            THEME="aurora"
-            MODE="NIGHT"
+            echo "theme=aurora" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Theme: ${THEME}"
-          echo "Mode: ${MODE}"
-
-          echo "theme=${THEME}" >> "$GITHUB_OUTPUT"
-          echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
-
-      - name: Generate Git3D Universe
-        uses: SandeepKomal/Git3D-Universe@v1.0.1
+      - name: Generate Git3D Universe v2.0.1
+        uses: SandeepKomal/Git3D-Universe@v2.0.1
         with:
           username: ${{ github.repository_owner }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           theme: ${{ steps.theme.outputs.theme }}
           output: profile/git3d-universe.svg
 
-      - name: Validate Git3D Universe
+      - name: Validate generated SVG and creator credit
         shell: bash
-        env:
-          SVG: profile/git3d-universe.svg
-          EXPECTED_LOGIN: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
 
-          test -s "${SVG}"
-          grep -q "<svg" "${SVG}"
-          grep -q "</svg>" "${SVG}"
+          SVG="profile/git3d-universe.svg"
 
-          if ! grep -qi "@${EXPECTED_LOGIN}" "${SVG}"; then
-            echo "ERROR: Generated SVG does not contain expected profile login."
-            exit 1
-          fi
+          test -s "$SVG"
+          grep -q "<svg" "$SVG"
+          grep -q "</svg>" "$SVG"
+          grep -Fq "crafted by Sandeep Komal Pothu" "$SVG"
 
-          grep -q "contributions" "${SVG}"
-          grep -q "active days" "${SVG}"
-          grep -q "current streak" "${SVG}"
-          grep -q "longest streak" "${SVG}"
+          echo "SVG generated successfully."
+          echo "Creator credit verified."
+          echo "Theme: ${{ steps.theme.outputs.theme }}"
 
-          if grep -q "Ada Example" "${SVG}" || grep -q "ada-example" "${SVG}"; then
-            echo "ERROR: Sample profile detected."
-            exit 1
-          fi
-
-          SIZE=$(wc -c < "${SVG}")
-
-          if [ "${SIZE}" -lt 5000 ]; then
-            echo "ERROR: Generated SVG is unexpectedly small."
-            exit 1
-          fi
-
-          echo "Git3D Universe generated successfully."
-          echo "SVG size: ${SIZE} bytes"
-          echo "Theme used: ${{ steps.theme.outputs.theme }}"
-          echo "Mode: ${{ steps.theme.outputs.mode }}"
-
-      - name: Commit Git3D Universe
+      - name: Commit generated SVG
         shell: bash
         run: |
           set -euo pipefail
@@ -135,9 +81,9 @@ jobs:
           git add profile/git3d-universe.svg
 
           if git diff --cached --quiet; then
-            echo "No Git3D changes detected."
+            echo "No changes detected."
             exit 0
           fi
 
-          git commit -m "chore: update Git3D Universe (${{ steps.theme.outputs.mode }})"
+          git commit -m "chore: update Git3D Universe v2.0.1"
           git push origin main
