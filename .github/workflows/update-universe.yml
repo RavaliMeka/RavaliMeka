@@ -1,54 +1,108 @@
-# Keeps the 3D contribution universe (cards/universe.svg) fresh. Written by "Patch your profile"; this file is yours to read, change or delete.
-#
-# Every 6 hours it redraws only the universe tile from .readme-patch/config.json and commits only if it changed.
-# The daily "Update profile README" workflow redraws everything, including the universe, once a day.
-# It uses NO third-party actions and no extra token: every step is plain shell, running the copy in .readme-patch/.
-#
-# To stop it: delete this file, or switch the workflow off in the Actions tab.
-name: Update 3D universe
+
+name: Update 3D Universe
 
 on:
   schedule:
-    - cron: "51 5-23/6 * * *"   # every 6 hours, starting 05:51 UTC
-  workflow_dispatch: {}                      # also lets you run it by hand from the Actions tab
+    - cron: "51 5-23/6 * * *" # Every 6 hours, starting at 05:51 UTC
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-profile-readme             # the same group as the daily workflow: they take turns
+  group: update-profile-readme
   cancel-in-progress: false
 
 jobs:
   universe:
+    name: Generate and update 3D Universe
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     steps:
-      - name: Get this repository
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" .
-          git config --local "http.https://github.com/.extraheader" "AUTHORIZATION: basic $auth"
+      - name: Checkout profile repository
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          fetch-depth: 0
 
-      - name: Redraw the 3D universe
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - name: Select theme using India time
+        id: theme
+        shell: bash
         run: |
           set -euo pipefail
-          node .readme-patch/cli.js "$GITHUB_REPOSITORY_OWNER" --config .readme-patch/config.json --require-activity --universe-only --out .
 
-      - name: Commit if it changed
+          HOUR=$(TZ=Asia/Kolkata date +%H)
+
+          if [ "$HOUR" -ge 6 ] && [ "$HOUR" -lt 18 ]; then
+            THEME="daylight"
+            MODE="DAY"
+          else
+            THEME="aurora"
+            MODE="NIGHT"
+          fi
+
+          echo "theme=$THEME" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "India time hour: $HOUR"
+          echo "Selected theme: $THEME"
+
+      - name: Generate Git3D Universe v2.0.0
+        uses: SandeepKomal/Git3D-Universe@v2.0.0
+        with:
+          username: ${{ github.repository_owner }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          theme: ${{ steps.theme.outputs.theme }}
+          output: cards/universe.svg
+
+      - name: Validate generated SVG
+        shell: bash
+        env:
+          SVG: cards/universe.svg
+          EXPECTED_LOGIN: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
+
+          if [ ! -s "$SVG" ]; then
+            echo "::error::SVG is missing or empty: $SVG"
+            exit 1
+          fi
+
+          grep -q '<svg' "$SVG"
+          grep -q '</svg>' "$SVG"
+          grep -qi "@${EXPECTED_LOGIN}" "$SVG"
+          grep -q "contributions" "$SVG"
+          grep -q "active days" "$SVG"
+          grep -q "current streak" "$SVG"
+          grep -q "longest streak" "$SVG"
+
+          if grep -q "Ada Example" "$SVG" || grep -q "ada-example" "$SVG"; then
+            echo "::error::Sample profile content detected."
+            exit 1
+          fi
+
+          SIZE=$(wc -c < "$SVG")
+
+          if [ "$SIZE" -lt 5000 ]; then
+            echo "::error::Generated SVG is unexpectedly small."
+            exit 1
+          fi
+
+          echo "SVG validation passed."
+
+      - name: Commit updated universe
+        shell: bash
+        run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add cards/universe*.svg
+
+          git add cards/universe.svg
+
           if git diff --cached --quiet; then
-            echo "The universe hasn't changed."
-          else
-            git commit -m "Update 3D universe"
-            git push
+            echo "The 3D Universe has not changed. Nothing to commit."
+            exit 0
           fi
+
+          git commit -m "Update 3D Universe (${{ steps.theme.outputs.mode }})"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
